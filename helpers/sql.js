@@ -1,6 +1,9 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+// Takes in a data object for updating in db and object that maps JS
+// property names to their corresponding SQL column names 
+// If the data object is empty(no keys) a BadRequestError is thrown
+
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
