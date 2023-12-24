@@ -48,18 +48,47 @@ class Company {
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
+  static async findAll({ name, minEmployees, maxEmployees }) {
+    // Initialize base query
+    let companiesQuery = `
+    SELECT handle,
+           name,
+           num_employees AS "numEmployees",
+           logo_url AS "logoUrl"
+    FROM companies
+    WHERE `;
 
-  static async findAll() {
-    const companiesRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+    const queryParams = [];
+    const conditions = [];
+
+    // Add conditions and params dynamically based on provided values
+    if (name) {
+      conditions.push(` name ILIKE '%' || $${queryParams.length + 1} || '%'`);
+      queryParams.push(name);
+    }
+    if (minEmployees) {
+      conditions.push(` num_employes >= $${queryParams.length + 1}`);
+      queryParams.push(minEmployees);
+    }
+    if (maxEmployees) {
+      conditions.push(` num_employees <= $${queryParams.length + 1}`);
+      queryParams.push(maxEmployees);
+    }
+
+    // handle conditions
+    if (conditions.length > 0) {
+      companiesQuery += conditions.join(' AND ');
+    } else {
+      companiesQuery += ' TRUE';
+    }
+    companiesQuery += ' ORDER BY name';
+
+    const companiesRes = await db.query(companiesQuery, queryParams);
+
     return companiesRes.rows;
+
   }
+  
 
   /** Given a company handle, return data about company.
    *
