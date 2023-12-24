@@ -67,7 +67,7 @@ class Company {
       queryParams.push(name);
     }
     if (minEmployees) {
-      conditions.push(` num_employes >= $${queryParams.length + 1}`);
+      conditions.push(` num_employees >= $${queryParams.length + 1}`);
       queryParams.push(minEmployees);
     }
     if (maxEmployees) {
