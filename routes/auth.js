@@ -22,6 +22,7 @@ const { BadRequestError } = require("../expressError");
 router.post("/token", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userAuthSchema);
+    console.log('here', req.body);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
@@ -30,6 +31,7 @@ router.post("/token", async function (req, res, next) {
     const { username, password } = req.body;
     const user = await User.authenticate(username, password);
     const token = createToken(user);
+    console.log('post', res.locals.user);
     return res.json({ token });
   } catch (err) {
     return next(err);
